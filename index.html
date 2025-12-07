@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tienda Demo</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        input { padding: 10px; width: 250px; }
+        button { padding: 10px 20px; background: #00ED64; border: none; cursor: pointer; }
+        #estado { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>🧸 Muñeco Agotado</h1>
+    <p>Déjanos tu correo y te avisamos:</p>
+
+    <input type="email" id="emailInput" placeholder="tu@correo.com">
+    <button onclick="enviar()">Suscribirme</button>
+    <div id="estado"></div>
+
+    <script>
+        async function enviar() {
+            const email = document.getElementById("emailInput").value;
+            const estado = document.getElementById("estado");
+            
+            estado.style.color = "blue";
+            estado.innerText = "Enviando...";
+
+            try {
+                const urlBackend = "https://ce55600375a8.ngrok-free.app/suscribir";
+
+                const respuesta = await fetch(urlBackend, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: email, producto: "Muñeco" })
+                });
+
+                const datos = await respuesta.json();
+
+                if (respuesta.ok) {
+                    estado.style.color = "green";
+                    estado.innerText = "✅ " + datos.mensaje;
+                } else {
+                    estado.style.color = "red";
+                    estado.innerText = "❌ " + datos.error;
+                }
+
+            } catch (error) {
+                console.error(error);
+                estado.style.color = "red";
+                estado.innerText = "❌ Error: Asegúrate de que el archivo Python (app.py) se está ejecutando.";
+            }
+        }
+    </script>
+</body>
+</html>
