@@ -2,56 +2,175 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Tienda Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda Cartoon Network</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; }
-        input { padding: 10px; width: 250px; }
-        button { padding: 10px 20px; background: #00ED64; border: none; cursor: pointer; }
-        #estado { margin-top: 20px; font-weight: bold; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; text-align: center; padding: 20px; }
+        h1 { color: #333; margin-bottom: 30px; }
+        
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 300px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+
+        .img-container {
+            height: 250px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eee;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        h3 { margin: 0 0 10px 0; font-size: 1.2em; color: #222; }
+        .price { font-size: 1.5em; color: #00ED64; font-weight: bold; margin-bottom: 15px; }
+        .unavailable { color: #e74c3c; font-weight: bold; margin-bottom: 15px; font-size: 0.9em; }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            align-self: center;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background-color: #555; }
+        
+        .status-msg { margin-top: 10px; font-size: 0.8em; min-height: 20px; }
     </style>
 </head>
 <body>
 
-    <h1>🧸 Muñeco Agotado</h1>
-    <p>Déjanos tu correo y te avisamos:</p>
+    <h1>🛍️ Merch Cartoon Network</h1>
 
-    <input type="email" id="emailInput" placeholder="tu@correo.com">
-    <button onclick="enviar()">Suscribirme</button>
-    <div id="estado"></div>
+    <div class="container">
+
+        <div class="card">
+            <div class="img-container">
+                <img src="https://imgur.com/uPS9pdr.jpeg" alt="Hora de Aventuras">
+            </div>
+            <div class="info">
+                <h3>Peluche Hora de Aventuras</h3>
+                <div class="price">10€</div>
+                <div class="unavailable">❌ Agotado temporalmente</div>
+                
+                <input type="email" id="email-1" placeholder="tu@email.com">
+                <button onclick="enviar('Peluche Hora de Aventuras', 'email-1', 'msg-1')">Avísame</button>
+                <div id="msg-1" class="status-msg"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="img-container">
+                <img src="https://imgur.com/BO3oFhU.jpeg" alt="Supernenas">
+            </div>
+            <div class="info">
+                <h3>Peluche Las Supernenas</h3>
+                <div class="price">15€</div>
+                <div class="unavailable">❌ Agotado temporalmente</div>
+
+                <input type="email" id="email-2" placeholder="tu@email.com">
+                <button onclick="enviar('Peluche Las Supernenas', 'email-2', 'msg-2')">Avísame</button>
+                <div id="msg-2" class="status-msg"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="img-container">
+                <img src="https://imgur.com/kQRSD0t.jpeg" alt="Steven Universe">
+            </div>
+            <div class="info">
+                <h3>Figura Steven Universe</h3>
+                <div class="price">15€</div>
+                <div class="unavailable">❌ Agotado temporalmente</div>
+
+                <input type="email" id="email-3" placeholder="tu@email.com">
+                <button onclick="enviar('Figura Steven Universe', 'email-3', 'msg-3')">Avísame</button>
+                <div id="msg-3" class="status-msg"></div>
+            </div>
+        </div>
+
+    </div>
 
     <script>
-        async function enviar() {
-            const email = document.getElementById("emailInput").value;
-            const estado = document.getElementById("estado");
-            
-            estado.style.color = "blue";
-            estado.innerText = "Enviando...";
+        async function enviar(nombreProducto, idInput, idMsg) {
+            const emailInput = document.getElementById(idInput);
+            const msgDiv = document.getElementById(idMsg);
+            const email = emailInput.value;
+
+            // Limpiar mensajes previos
+            msgDiv.style.color = "black";
+            msgDiv.innerText = "Enviando...";
+
+            if (!email.includes("@")) {
+                msgDiv.style.color = "red";
+                msgDiv.innerText = "Email incorrecto";
+                return;
+            }
 
             try {
-                const urlBackend = "https://ce55600375a8.ngrok-free.app/suscribir";
+                // 👇👇 TU URL DE NGROK 👇👇
+                const urlBackend = "https://c8cdf3f07df8.ngrok-free.app/suscribir";
 
-                const respuesta = await fetch(urlBackend, {
+                const response = await fetch(urlBackend, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: email, producto: "Muñeco" })
+                    body: JSON.stringify({ 
+                        email: email, 
+                        producto: nombreProducto // Enviamos el nombre dinámico
+                    })
                 });
 
-                const datos = await respuesta.json();
+                const data = await response.json();
 
-                if (respuesta.ok) {
-                    estado.style.color = "green";
-                    estado.innerText = "✅ " + datos.mensaje;
+                if (response.ok) {
+                    msgDiv.style.color = "green";
+                    msgDiv.innerText = "✅ " + data.mensaje;
+                    emailInput.value = ""; // Limpiar campo
                 } else {
-                    estado.style.color = "red";
-                    estado.innerText = "❌ " + datos.error;
+                    msgDiv.style.color = "red";
+                    msgDiv.innerText = "❌ " + (data.error || "Error");
                 }
 
             } catch (error) {
                 console.error(error);
-                estado.style.color = "red";
-                estado.innerText = "❌ Error: Asegúrate de que el archivo Python (app.py) se está ejecutando.";
+                msgDiv.style.color = "red";
+                msgDiv.innerText = "❌ Error de conexión (revisa el Python)";
             }
         }
     </script>
+
 </body>
 </html>
